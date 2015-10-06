@@ -7,8 +7,8 @@
 
 Download the [production version][min] or the [development version][max].
 
-[min]: https://raw.githubusercontent.com/hansoninc/jquery-workout-timer/master/dist/jquery.workout-timer.min.js
-[max]: https://raw.githubusercontent.com/hansoninc/jquery-workout-timer/master/dist/jquery.workout-timer.js
+[min]: https://raw.githubusercontent.com/hansoninc/jquery.workout-timer/master/dist/jquery.workout-timer.min.js
+[max]: https://raw.githubusercontent.com/hansoninc/jquery.workout-timer/master/dist/jquery.workout-timer.js
 
 In your web page:
 
