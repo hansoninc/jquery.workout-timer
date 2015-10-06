@@ -1,0 +1,14 @@
+/*================================================================================
+[Workout timer]
+*/
+.workout-timer__counter,
+.workout-timer__play-pause,
+.workout-timer__interval-counter {
+  display: inline-block;
+}
+.workout-timer__play-pause {
+  width: 40px;
+  height: 40px;
+  background: #000;
+  color: #fff;
+}

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<link rel="stylesheet" href="jquery.workout-timer.css" />
+</head>
+<body>
+
+	<h1>Timer Examples</h1>
+
+	<h2>Default (Countup) Timer</h2>
+	<p>Counts up to and end time</p>
+	<div class="workout-timer" id="timer1" data-countdown="false">
+		<div class="workout-timer__counter"></div>
+		<div class="workout-timer__play-pause" data-paused="true">Play</div>
+		<div class="workout-timer__intervals">Intervals</div>
+		<div class="workout-timer__volume">Volume</div>
+	</div>
+
+	<h2>Limited Countup Timer</h2>
+	<p>Counts up indefinitely</p>
+	<div class="workout-timer" id="timer2" data-countdown="false" data-intervals="-1">
+		<div class="workout-timer__counter"></div>
+		<div class="workout-timer__play-pause" data-paused="true">Play</div>
+		<div class="workout-timer__intervals">Intervals</div>
+		<div class="workout-timer__volume">Volume</div>
+	</div>
+
+	<h2>Countdown Timer</h2>
+	<p>Counts down from a starting point to zero</p>
+	<div class="workout-timer" id="timer3" data-countdown="true" data-duration="60">
+		<div class="workout-timer__counter"></div>
+		<div class="workout-timer__play-pause" data-paused="true">Play</div>
+		<div class="workout-timer__intervals">Intervals</div>
+		<div class="workout-timer__volume">Volume</div>
+	</div>
+
+	<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+	<script src="../dist/jquery.workout-timer.js"></script>
+	<script>
+
+		// Init timers
+		$('.workout-timer').workoutTimer();
+
+	</script>
+</body>
+</html>

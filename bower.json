@@ -1,0 +1,11 @@
+{
+  "name": "jquery-workout-timer",
+  "version": "0.0.1",
+  "dependencies": {
+    "jQuery-runner": "jquery-runner#~2.3.3"
+  },
+  "devDependencies": {
+    "qunit": "~1.12.0",
+    "jquery": "~1.10"
+  }
+}
