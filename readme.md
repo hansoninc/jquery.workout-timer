@@ -2,6 +2,7 @@
 
 > A multifunctional workout timer plugin
 
+This plugin is not finished. Documentation coming soon.
 
 ## Getting Started
 
@@ -25,4 +26,4 @@ In your web page:
 
 ## License
 
-MIT © Dave Rodriguez
+MIT © Hanson Inc
