@@ -5,6 +5,7 @@
 .workout-timer {
 	&__counter, &__play-pause, &__reset, &__repetitions, &__volume {
 		display: inline-block;
+		margin: 0 5px;
 	}
 
 	&__play-pause, &__reset, &__volume {
@@ -14,6 +15,7 @@
 		color: #fff;
 		line-height: 40px;
 		text-align: center;
+		font-size: 1.66em;
 	}
 
 	&__play-pause {
@@ -24,14 +26,17 @@
 		}
 
 		&[data-paused=true]:after {
-			content: '>';
+			content: '\276f';
 		}
 	}
 
-	&__counter {
+	&__counter, &__repetitions {
 		padding: 8px;
 		font-weight: bold;
+		border: 1px solid #333;
+	}
 
+	&__counter {
 		&[data-state=base] {
 			background: #99ff99;
 		}
@@ -45,22 +50,28 @@
 		}
 	}
 
+	&__reset {
+		&:after {
+			content: '\21ba';
+		}
+	}
+
 	&__volume {
 
 		&[data-volume-level=level1]:after {
-			content: ')';
+			content: '\1f508';
 		}
 
 		&[data-volume-level=level2]:after {
-			content: '))';
+			content: '\1f509';
 		}
 
 		&[data-volume-level=level3]:after {
-			content: ')))';
+			content: '\1f50a';
 		}
 
 		&[data-volume-level=mute]:after {
-			content: 'X';
+			content: '\1f507';
 		}
 	}
 }

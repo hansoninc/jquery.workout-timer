@@ -7,6 +7,7 @@
 .workout-timer__repetitions,
 .workout-timer__volume {
   display: inline-block;
+  margin: 0 5px;
 }
 .workout-timer__play-pause,
 .workout-timer__reset,
@@ -17,6 +18,7 @@
   color: #fff;
   line-height: 40px;
   text-align: center;
+  font-size: 1.66em;
 }
 .workout-timer__play-pause {
   font-weight: bold;
@@ -25,11 +27,13 @@
   content: '||';
 }
 .workout-timer__play-pause[data-paused=true]:after {
-  content: '>';
+  content: '\276f';
 }
-.workout-timer__counter {
+.workout-timer__counter,
+.workout-timer__repetitions {
   padding: 8px;
   font-weight: bold;
+  border: 1px solid #333;
 }
 .workout-timer__counter[data-state=base] {
   background: #99ff99;
@@ -40,15 +44,18 @@
 .workout-timer__counter[data-state=complete] {
   background: #CC9999;
 }
+.workout-timer__reset:after {
+  content: '\21ba';
+}
 .workout-timer__volume[data-volume-level=level1]:after {
-  content: ')';
+  content: '\1f508';
 }
 .workout-timer__volume[data-volume-level=level2]:after {
-  content: '))';
+  content: '\1f509';
 }
 .workout-timer__volume[data-volume-level=level3]:after {
-  content: ')))';
+  content: '\1f50a';
 }
 .workout-timer__volume[data-volume-level=mute]:after {
-  content: 'X';
+  content: '\1f507';
 }
