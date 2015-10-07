@@ -11,8 +11,9 @@
 	"boss": true,
 	"eqnull": true,
 	"browser": true,
-//	"devel": true,
+	"devel": true,
 	"predef": [
-		"jQuery"
+		"jQuery",
+		"ion"
 	]
 }

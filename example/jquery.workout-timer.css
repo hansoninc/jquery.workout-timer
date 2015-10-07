@@ -3,12 +3,52 @@
 */
 .workout-timer__counter,
 .workout-timer__play-pause,
-.workout-timer__interval-counter {
+.workout-timer__reset,
+.workout-timer__repetitions,
+.workout-timer__volume {
   display: inline-block;
 }
-.workout-timer__play-pause {
+.workout-timer__play-pause,
+.workout-timer__reset,
+.workout-timer__volume {
   width: 40px;
   height: 40px;
   background: #000;
   color: #fff;
+  line-height: 40px;
+  text-align: center;
+}
+.workout-timer__play-pause {
+  font-weight: bold;
+}
+.workout-timer__play-pause:after {
+  content: '||';
+}
+.workout-timer__play-pause[data-paused=true]:after {
+  content: '>';
+}
+.workout-timer__counter {
+  padding: 8px;
+  font-weight: bold;
+}
+.workout-timer__counter[data-state=base] {
+  background: #99ff99;
+}
+.workout-timer__counter[data-state=alternate] {
+  background: #ffff99;
+}
+.workout-timer__counter[data-state=complete] {
+  background: #CC9999;
+}
+.workout-timer__volume[data-volume-level=level1]:after {
+  content: ')';
+}
+.workout-timer__volume[data-volume-level=level2]:after {
+  content: '))';
+}
+.workout-timer__volume[data-volume-level=level3]:after {
+  content: ')))';
+}
+.workout-timer__volume[data-volume-level=mute]:after {
+  content: 'X';
 }

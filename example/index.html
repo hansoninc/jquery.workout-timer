@@ -3,42 +3,108 @@
 <head>
 	<meta charset="UTF-8">
 	<title></title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"/>
 	<link rel="stylesheet" href="jquery.workout-timer.css" />
 </head>
 <body>
 
-	<h1>Timer Examples</h1>
+<div class="wrapper">
+	<div class="container">
+		<div class="row">
+			<div class="col-xs-12">
+				<h1>Timer Examples</h1>
 
-	<h2>Default (Countup) Timer</h2>
-	<p>Counts up to and end time</p>
-	<div class="workout-timer" id="timer1" data-countdown="false">
-		<div class="workout-timer__counter"></div>
-		<div class="workout-timer__play-pause" data-paused="true">Play</div>
-		<div class="workout-timer__intervals">Intervals</div>
-		<div class="workout-timer__volume">Volume</div>
-	</div>
+				<h2>Default (Countup) Timer</h2>
+				<p>Counts up to a specified end time</p>
+				<div class="workout-timer" data-duration="20" data-sound="bell_ring">
+					<div class="workout-timer__counter" data-counter></div>
+					<div class="workout-timer__play-pause" data-control="play-pause" data-paused="true"></div>
+					<div class="workout-timer__reset" data-control="reset">Reset</div>
+					<div class="workout-timer__repetitions" data-repetitions>Repetitions</div>
+					<div class="workout-timer__volume" data-control="volume"></div>
+				</div>
 
-	<h2>Limited Countup Timer</h2>
-	<p>Counts up indefinitely</p>
-	<div class="workout-timer" id="timer2" data-countdown="false" data-intervals="-1">
-		<div class="workout-timer__counter"></div>
-		<div class="workout-timer__play-pause" data-paused="true">Play</div>
-		<div class="workout-timer__intervals">Intervals</div>
-		<div class="workout-timer__volume">Volume</div>
-	</div>
+				<div>
+					<p>Code example:</p>
+					<pre><code>&lt;div class=&quot;workout-timer&quot; data-duration=&quot;20&quot; data-sound=&quot;bell_ring&quot;&gt;
+    &lt;div class=&quot;workout-timer__counter&quot; data-counter&gt;&lt;/div&gt;
+    &lt;div class=&quot;workout-timer__play-pause&quot; data-control=&quot;play-pause&quot; data-paused=&quot;true&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;workout-timer__reset&quot; data-control=&quot;reset&quot;&gt;Reset&lt;/div&gt;
+    &lt;div class=&quot;workout-timer__repetitions&quot; data-repetitions&gt;Repetitions&lt;/div&gt;
+    &lt;div class=&quot;workout-timer__volume&quot; data-control=&quot;volume&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+				</div>
 
-	<h2>Countdown Timer</h2>
-	<p>Counts down from a starting point to zero</p>
-	<div class="workout-timer" id="timer3" data-countdown="true" data-duration="60">
-		<div class="workout-timer__counter"></div>
-		<div class="workout-timer__play-pause" data-paused="true">Play</div>
-		<div class="workout-timer__intervals">Intervals</div>
-		<div class="workout-timer__volume">Volume</div>
+				<h2>Indefinite Countup Timer</h2>
+				<p>Counts up indefinitely</p>
+				<div class="workout-timer" data-repetitions="-1" data-sound="bell_ring">
+					<div class="workout-timer__counter" data-counter></div>
+					<div class="workout-timer__play-pause" data-control="play-pause" data-paused="true"></div>
+					<div class="workout-timer__reset" data-control="reset">Reset</div>
+					<div class="workout-timer__repetitions" data-repetitions>Repetitions</div>
+					<div class="workout-timer__volume" data-control="volume"></div>
+				</div>
+
+				<h2>Countdown Timer</h2>
+				<p>Counts down once from a starting point to zero</p>
+				<div class="workout-timer" data-countdown="true" data-duration="60" data-sound="bell_ring">
+					<div class="workout-timer__counter" data-counter></div>
+					<div class="workout-timer__play-pause" data-control="play-pause" data-paused="true"></div>
+					<div class="workout-timer__reset" data-control="reset">Reset</div>
+					<div class="workout-timer__repetitions" data-repetitions>Repetitions</div>
+					<div class="workout-timer__volume" data-control="volume"></div>
+				</div>
+
+				<h2>Repeating Countdown Timer</h2>
+				<p>Counts down from a starting point to zero for a set number of repetitions</p>
+				<div class="workout-timer" data-countdown="true" data-duration="20" data-repetitions="3" data-sound="door_bell">
+					<div class="workout-timer__counter" data-counter></div>
+					<div class="workout-timer__play-pause" data-control="play-pause" data-paused="true"></div>
+					<div class="workout-timer__reset" data-control="reset">Reset</div>
+					<div class="workout-timer__repetitions" data-repetitions>Repetitions</div>
+					<div class="workout-timer__volume" data-control="volume"></div>
+				</div>
+
+				<h2>Double Interval Countdown Timer</h2>
+				<p>Counts down from a starting point to zero, then counts down from a second starting point to zero, for a set number of repetitions</p>
+				<div class="workout-timer" data-countdown="true" data-duration="10" data-duration2="5" data-repetitions="2" data-sound="bell_ring">
+					<div class="workout-timer__counter" data-counter></div>
+					<div class="workout-timer__play-pause" data-control="play-pause" data-paused="true"></div>
+					<div class="workout-timer__reset" data-control="reset">Reset</div>
+					<div class="workout-timer__repetitions" data-repetitions>Repetitions</div>
+					<div class="workout-timer__volume" data-control="volume"></div>
+				</div>
+
+				<div>
+					<p>Code example:</p>
+					<pre><code>&lt;div class=&quot;workout-timer&quot; data-countdown=&quot;true&quot; data-duration=&quot;20&quot; data-duration2=&quot;10&quot; data-repetitions=&quot;3&quot; data-sound=&quot;bell_ring&quot;&gt;
+    &lt;div class=&quot;workout-timer__counter&quot; data-counter&gt;&lt;/div&gt;
+    &lt;div class=&quot;workout-timer__play-pause&quot; data-control=&quot;play-pause&quot; data-paused=&quot;true&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;workout-timer__reset&quot; data-control=&quot;reset&quot;&gt;Reset&lt;/div&gt;
+    &lt;div class=&quot;workout-timer__repetitions&quot; data-repetitions&gt;Repetitions&lt;/div&gt;
+    &lt;div class=&quot;workout-timer__volume&quot; data-control=&quot;volume&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+				</div>
+			</div>
+		</div>
 	</div>
+</div>
 
 	<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
 	<script src="../dist/jquery.workout-timer.js"></script>
 	<script>
+
+		// Register a sound effect
+		$.WorkoutTimer.registerSound({
+			path: "audio/",
+			name: "bell_ring"
+		});
+
+		// Register a sound effect
+		$.WorkoutTimer.registerSound({
+			path: "audio/",
+			name: "door_bell"
+		});
 
 		// Init timers
 		$('.workout-timer').workoutTimer();

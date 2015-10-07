@@ -2,7 +2,8 @@
   "name": "jquery-workout-timer",
   "version": "0.0.1",
   "dependencies": {
-    "jQuery-runner": "jquery-runner#~2.3.3"
+    "jQuery-runner": "jquery-runner#~2.3.3",
+    "ion-sound": "ionsound#~3.0.6"
   },
   "devDependencies": {
     "qunit": "~1.12.0",

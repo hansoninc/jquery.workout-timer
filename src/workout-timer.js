@@ -1,11 +1,17 @@
 /*
  * jQuery Workout Timer 1.0
- * Copyright (c) 2015 Dave Rodriguez
+ * Copyright (c) 2015 Hanson Inc.
  * Licensed under the MIT license.
+ *
+ * @constructor
+ * @alias $.fn.workoutTimer
+ * @classdesc A multi-functional workout timer based on jQuery.runner
+ * @requires jquery
+ * @requires jquery.runner
+ * @requires ion.sound
  */
 (function ($) {
 	/**
-	 *
 	 * @param {*|HTMLElement} target
 	 * @param {Object} opts
 	 * @constructor
@@ -24,32 +30,107 @@
 		 */
 		this.options = opts;
 
-		// Parse options from data-attributes
+		/**
+		 * Holds the original number of repetitions in case the timer is reset
+		 * @type {number|Number|*}
+		 */
+		this.options.originalRepetitions = this.options.repetitions;
+
+		WorkoutTimer.instances.push(this);
+
 		this.setOptionsFromDataAttributes();
 
-		this.counter = this.domElement.find( this.options.controls.counter ) || null;
+		/**
+		 * The field that displays the current time in this timer
+		 * @type {*|HTMLElement}
+		 */
+		this.counter = this.domElement.find( '[data-counter]' ) || null;
+		this.counter.attr('data-state', 'base');
+
+		if ( this.options.sound ) {
+			this.options.volume = WorkoutTimer.volumeStates[0].level;
+		}
 
 		this.initRunner();
 
 		this.initControls();
+		this.updateRepetitionCounter();
+
+		this.updateVolumeCounter();
 	};
 
 	/**
 	 * Default plugin options
-	 * @type {{countdown: boolean, duration: number, duration2: number, intervals: number, controls: {counter: string, playPause: string, intervalCounter: string, volume: string}}}
+	 * @type {{countdown: boolean, duration: number, duration2: number, repetitions: number, controls: {counter: string, playPause: string, repetitionCounter: string, volume: string}}}
 	 */
 	WorkoutTimer.defaults = {
 		countdown: false,
 		autostart: false,
 		duration: 10,
 		duration2: 0,
-		intervals: 1,
-		controls: {
-			counter: '.workout-timer__counter',
-			playPause: '.workout-timer__play-pause',
-			intervalCounter: '.workout-timer__intervals',
-			volume: '.workout-timer__volume'
+		repetitions: 0,
+		sound: null
+	};
+
+	/**
+	 * Stores a list of all known WorkoutTimer instances
+	 * @type {Array}
+	 */
+	WorkoutTimer.instances = [];
+
+	/**
+	 * Available volume states. This property is shared among all instances of WorkoutTimer.
+	 * @static
+	 * @type {Object[]}
+	 */
+	WorkoutTimer.volumeStates = [
+		{ name: 'level1', level: 0.5 },
+		{ name: 'level2', level: 1 },
+		{ name: 'level3', level: 2 },
+		{ name: 'mute', level: 0 }
+	];
+
+	/**
+	 * Advances to the next volume level (1 -> 2 -> 3 -> mute). Affects all instances of WorkoutTimer.
+	 * @static
+	 */
+	WorkoutTimer.toggleVolume = function() {
+		WorkoutTimer.volumeStates.push( WorkoutTimer.volumeStates.shift() );
+
+		for ( var i = 0; i < WorkoutTimer.instances.length; i++ ) {
+			var nextInstance = WorkoutTimer.instances[i];
+			nextInstance.options.volume = WorkoutTimer.volumeStates[0].level;
+			nextInstance.updateVolumeCounter();
 		}
+	};
+
+	/**
+	 * Default sound options
+	 * @type {{path: string, preload: boolean}}
+	 */
+	WorkoutTimer.soundDefaults = {
+		path: 'audio/',
+		preload: true
+	};
+
+	/**
+	 * Registers a sound to be used with the plugin. To specify a sound, register it using $.WorkoutTimer.registerSound()
+	 * and then set the data-sound attribute of your timer (or pass the sound name in as a configuration variable).
+	 * @param soundObj
+	 * @static
+	 */
+	WorkoutTimer.registerSound = function(opts) {
+		var soundOptions = $.extend( {}, WorkoutTimer.soundDefaults, opts );
+
+		soundOptions.volume = WorkoutTimer.volumeStates[0].level;
+
+		if ( soundOptions.name ) {
+			soundOptions.sounds = [{
+				name: soundOptions.name
+			}];
+		}
+
+		ion.sound(soundOptions);
 	};
 
 	/**
@@ -72,51 +153,176 @@
 		}
 
 		if (dataAttributes.duration2) {
-			this.options.duration = parseFloat(dataAttributes.duration);
+			this.options.duration2 = parseFloat(dataAttributes.duration2);
 		}
 
-		if (dataAttributes.intervals) {
-			this.options.intervals = parseFloat(dataAttributes.intervals);
+		if (dataAttributes.repetitions) {
+			this.options.repetitions = parseFloat(dataAttributes.repetitions);
+			this.options.originalRepetitions = this.options.repetitions;
+		}
+
+		if (dataAttributes.sound) {
+			this.options.sound = dataAttributes.sound;
 		}
 	};
 
-	WorkoutTimer.prototype.initRunner = function() {
+	/**
+	 * Sets up the jQuery.runner to carry out the next interval
+	 * @param {Number} duration The next duration to count to
+	 * @param {Boolean} [autostart=false] Starts the timer regardless of whether options.autostart is true
+	 */
+	WorkoutTimer.prototype.initRunner = function(duration, autostart) {
+		var instance = this;
+
+		if (!duration) {
+			duration = this.options.duration;
+		}
 
 		var runnerOpts = {
-			autostart: this.options.autostart,
+			autostart: this.options.autostart || autostart,
 			countdown: this.options.countdown,
-			startAt: this.options.countdown ? this.options.duration * 1000 : 0
+			startAt: this.options.countdown ? duration * 1000 : 0
 		};
 
-		// A value of 0 or less for intervals means this counter will run indefinitely
-		if (this.options.intervals > 0) {
+		// A value of -1 for repetitions means this counter will run indefinitely
+		if (this.options.repetitions >= 0) {
 			if (this.options.countdown) {
 				runnerOpts.stopAt = 0;
 			} else {
-				runnerOpts.stopAt = this.options.duration * 1000;
+				runnerOpts.stopAt = duration * 1000;
 			}
 		}
 
 		this.counter.runner(runnerOpts);
-	};
 
-	WorkoutTimer.prototype.initControls = function() {
-
-		var instance = this;
-
-		this.controls = this.controls || {};
-
-		this.controls.playPause = this.domElement.find( this.options.controls.playPause ) || null;
-		this.controls.intervalCounter = this.domElement.find( this.options.controls.intervalCounter ) || null;
-		this.controls.volume = this.domElement.find( this.options.controls.volume ) || null;
-
-		this.controls.playPause.on('click', function() {
-			instance.counter.runner('start');
+		// Since the runner is recycled, make sure the finish listener is only bound once
+		this.counter.off('runnerFinish').on('runnerFinish', function() {
+			instance.intervalComplete();
 		});
 	};
 
-	$.fn.workoutTimer = function (opts) {
+	WorkoutTimer.prototype.initControls = function() {
+		var instance = this;
+		this.controls = this.controls || {};
 
+		this.controls.playPause = this.domElement.find( '[data-control=play-pause]' ) || null;
+		this.controls.reset = this.domElement.find( '[data-control=reset]' ) || null;
+		this.controls.repetitionCounter = this.domElement.find( '[data-repetitions]' ) || null;
+		this.controls.volume = this.domElement.find( '[data-control=volume]' ) || null;
+
+		this.controls.playPause.on('click', function() {
+			instance.toggleRunnerState();
+		});
+
+		this.resetPlayPauseControl();
+
+		this.controls.reset.on('click', function() {
+			instance.counter.runner('reset', true);
+			instance.resetPlayPauseControl();
+			instance.resetRepetitions();
+		});
+
+		this.controls.volume.on('click', function() {
+			WorkoutTimer.toggleVolume();
+		});
+	};
+
+	WorkoutTimer.prototype.resetPlayPauseControl = function() {
+		// TODO: Move this somewhere more appropriate
+		if (this.options.autostart) {
+			this.controls.playPause.attr('data-paused', 'false');
+		} else {
+			this.controls.playPause.attr('data-paused', 'true');
+		}
+	};
+
+	/**
+	 * Toggles between playing and paused states
+	 */
+	WorkoutTimer.prototype.toggleRunnerState = function() {
+		if ( this.controls.playPause.attr('data-paused') === 'true') {
+			this.controls.playPause.attr('data-paused', 'false');
+		} else {
+			this.controls.playPause.attr('data-paused', 'true');
+		}
+
+		this.counter.runner('toggle');
+	};
+
+	/**
+	 * Updates the number of repetitions remaining counter
+	 */
+	WorkoutTimer.prototype.updateRepetitionCounter = function() {
+		this.controls.repetitionCounter.html( this.options.repetitions >= 0 ? this.options.repetitions : '&infin;' );
+	};
+
+	/**
+	 * Resets the timer back to the original number of repetitions
+	 */
+	WorkoutTimer.prototype.resetRepetitions = function() {
+		this.options.repetitions = this.options.originalRepetitions;
+		this.updateRepetitionCounter();
+	};
+
+	/**
+	 *
+	 */
+	WorkoutTimer.prototype.intervalComplete = function() {
+		// Play sound if configured
+		if ( this.options.sound ) {
+			ion.sound.play( this.options.sound, { volume: this.options.volume } );
+			console.log(this.options.volume);
+		}
+
+		if (this.options.repetitions > 0) {
+			var duration = this.options.duration;
+
+			// If this timer contains two duration properties, swap between the base and the alternate
+			if (this.options.duration2) {
+				if ( this.domElement.data('currentCounter') === 'alternate' ) {
+					duration = this.options.duration;
+					this.domElement.data('currentCounter', 'base');
+					this.counter.attr('data-state', 'base');
+
+					// For a double-interval counter, only decrement the repetitions counter when the second interval finishes
+					this.options.repetitions--;
+				} else {
+					duration = this.options.duration2;
+					this.domElement.data('currentCounter', 'alternate');
+					this.counter.attr('data-state', 'alternate');
+				}
+			} else {
+				this.domElement.data('currentCounter', 'base');
+				this.counter.attr('data-state', 'base');
+				this.options.repetitions--;
+			}
+
+			this.updateRepetitionCounter();
+			this.initRunner(duration, true);
+		} else {
+			this.timerComplete();
+		}
+	};
+
+	/**
+	 * Handler for the end of the timer
+	 */
+	WorkoutTimer.prototype.timerComplete = function() {
+		this.counter.attr('data-state', 'complete');
+	};
+
+	/**
+	 * Updates the current state of the volume counter
+	 */
+	WorkoutTimer.prototype.updateVolumeCounter = function() {
+		var vol = WorkoutTimer.volumeStates[0];
+		this.volume = vol.level;
+		this.controls.volume.attr('data-volume-level', vol.name);
+	};
+
+	$.WorkoutTimer = WorkoutTimer;
+
+	$.fn.workoutTimer = function (opts) {
 		return this.each(function () {
 			var options = $.extend({}, WorkoutTimer.defaults, opts);
 			new WorkoutTimer(this, options);

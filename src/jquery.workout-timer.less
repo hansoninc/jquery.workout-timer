@@ -3,15 +3,65 @@
 */
 
 .workout-timer {
-	&__counter, &__play-pause, &__interval-counter {
+	&__counter, &__play-pause, &__reset, &__repetitions, &__volume {
 		display: inline-block;
 	}
 
-	&__play-pause {
+	&__play-pause, &__reset, &__volume {
 		width: 40px;
 		height: 40px;
 		background: #000;
 		color: #fff;
+		line-height: 40px;
+		text-align: center;
+	}
 
+	&__play-pause {
+		font-weight: bold;
+
+		&:after {
+			content: '||';
+		}
+
+		&[data-paused=true]:after {
+			content: '>';
+		}
+	}
+
+	&__counter {
+		padding: 8px;
+		font-weight: bold;
+
+		&[data-state=base] {
+			background: #99ff99;
+		}
+
+		&[data-state=alternate] {
+			background: #ffff99;
+		}
+
+		&[data-state=complete] {
+			background: #CC9999;
+		}
+	}
+
+	&__volume {
+
+		&[data-volume-level=level1]:after {
+			content: ')';
+		}
+
+		&[data-volume-level=level2]:after {
+			content: '))';
+		}
+
+		&[data-volume-level=level3]:after {
+			content: ')))';
+		}
+
+		&[data-volume-level=mute]:after {
+			content: 'X';
+		}
 	}
 }
+
