@@ -8,6 +8,15 @@
 
 	<!-- Example-page styles -->
 	<style>
+		body {
+			margin-bottom: 100px;
+		}
+
+		.event-log {
+			width: 100%;
+			margin: 20px 0;
+		}
+
 		.code-example {
 			margin: 20px 0;
 		}
@@ -38,12 +47,12 @@
 				<div class="code-example">
 					<p>Code example:</p>
 					<pre><code>&lt;div class=&quot;workout-timer&quot; data-duration=&quot;20&quot; data-sound=&quot;bell_ring&quot;&gt;
-    &lt;div class=&quot;workout-timer__counter&quot; data-counter&gt;&lt;/div&gt;
-    &lt;div class=&quot;workout-timer__play-pause&quot; data-control=&quot;play-pause&quot; data-paused=&quot;true&quot;&gt;&lt;/div&gt;
-    &lt;div class=&quot;workout-timer__reset&quot; data-control=&quot;reset&quot;&gt;&lt;/div&gt;
-    &lt;div class=&quot;workout-timer__repetitions&quot; data-repetitions&gt;Repetitions&lt;/div&gt;
-    &lt;div class=&quot;workout-timer__volume&quot; data-control=&quot;volume&quot;&gt;&lt;/div&gt;
-&lt;/div&gt;</code></pre>
+						&lt;div class=&quot;workout-timer__counter&quot; data-counter&gt;&lt;/div&gt;
+						&lt;div class=&quot;workout-timer__play-pause&quot; data-control=&quot;play-pause&quot; data-paused=&quot;true&quot;&gt;&lt;/div&gt;
+						&lt;div class=&quot;workout-timer__reset&quot; data-control=&quot;reset&quot;&gt;&lt;/div&gt;
+						&lt;div class=&quot;workout-timer__repetitions&quot; data-repetitions&gt;Repetitions&lt;/div&gt;
+						&lt;div class=&quot;workout-timer__volume&quot; data-control=&quot;volume&quot;&gt;&lt;/div&gt;
+						&lt;/div&gt;</code></pre>
 				</div>
 
 				<h2>Indefinite Countup Timer</h2>
@@ -58,12 +67,12 @@
 				<div class="code-example">
 					<p>Code example:</p>
 					<pre><code>&lt;div class=&quot;workout-timer&quot; data-repetitions=&quot;-1&quot; data-sound=&quot;bell_ring&quot;&gt;
-    &lt;div class=&quot;workout-timer__counter&quot; data-counter&gt;&lt;/div&gt;
-    &lt;div class=&quot;workout-timer__play-pause&quot; data-control=&quot;play-pause&quot; data-paused=&quot;true&quot;&gt;&lt;/div&gt;
-    &lt;div class=&quot;workout-timer__reset&quot; data-control=&quot;reset&quot;&gt;&lt;/div&gt;
-    &lt;div class=&quot;workout-timer__repetitions&quot; data-repetitions&gt;Repetitions&lt;/div&gt;
-    &lt;div class=&quot;workout-timer__volume&quot; data-control=&quot;volume&quot;&gt;&lt;/div&gt;
-&lt;/div&gt;</code></pre>
+						&lt;div class=&quot;workout-timer__counter&quot; data-counter&gt;&lt;/div&gt;
+						&lt;div class=&quot;workout-timer__play-pause&quot; data-control=&quot;play-pause&quot; data-paused=&quot;true&quot;&gt;&lt;/div&gt;
+						&lt;div class=&quot;workout-timer__reset&quot; data-control=&quot;reset&quot;&gt;&lt;/div&gt;
+						&lt;div class=&quot;workout-timer__repetitions&quot; data-repetitions&gt;Repetitions&lt;/div&gt;
+						&lt;div class=&quot;workout-timer__volume&quot; data-control=&quot;volume&quot;&gt;&lt;/div&gt;
+						&lt;/div&gt;</code></pre>
 				</div>
 
 				<h2>Countdown Timer</h2>
@@ -78,13 +87,13 @@
 				<div class="code-example">
 					<p>Code example:</p>
 					<pre><code>&lt;div class=&quot;workout-timer&quot; data-countdown=&quot;true&quot; data-duration=&quot;60&quot; data-sound=&quot;bell_ring&quot;&gt;
-    &lt;div class=&quot;workout-timer__counter&quot; data-counter&gt;&lt;/div&gt;
-    &lt;div class=&quot;workout-timer__play-pause&quot; data-control=&quot;play-pause&quot; data-paused=&quot;true&quot;&gt;&lt;/div&gt;
-    &lt;div class=&quot;workout-timer__reset&quot; data-control=&quot;reset&quot;&gt;&lt;/div&gt;
-    &lt;div class=&quot;workout-timer__repetitions&quot; data-repetitions&gt;Repetitions&lt;/div&gt;
-    &lt;div class=&quot;workout-timer__volume&quot; data-control=&quot;volume&quot;&gt;&lt;/div&gt;
-&lt;/div&gt;</code></pre>
-                </div>
+						&lt;div class=&quot;workout-timer__counter&quot; data-counter&gt;&lt;/div&gt;
+						&lt;div class=&quot;workout-timer__play-pause&quot; data-control=&quot;play-pause&quot; data-paused=&quot;true&quot;&gt;&lt;/div&gt;
+						&lt;div class=&quot;workout-timer__reset&quot; data-control=&quot;reset&quot;&gt;&lt;/div&gt;
+						&lt;div class=&quot;workout-timer__repetitions&quot; data-repetitions&gt;Repetitions&lt;/div&gt;
+						&lt;div class=&quot;workout-timer__volume&quot; data-control=&quot;volume&quot;&gt;&lt;/div&gt;
+						&lt;/div&gt;</code></pre>
+				</div>
 
 				<h2>Repeating Countdown Timer</h2>
 				<p>Counts down from a starting point to zero for a set number of repetitions</p>
@@ -98,12 +107,12 @@
 				<div class="code-example">
 					<p>Code example:</p>
 					<pre><code>&lt;div class=&quot;workout-timer&quot; data-countdown=&quot;true&quot; data-duration=&quot;20&quot; data-repetitions=&quot;3&quot; data-sound=&quot;door_bell&quot;&gt;
-    &lt;div class=&quot;workout-timer__counter&quot; data-counter&gt;&lt;/div&gt;
-    &lt;div class=&quot;workout-timer__play-pause&quot; data-control=&quot;play-pause&quot; data-paused=&quot;true&quot;&gt;&lt;/div&gt;
-    &lt;div class=&quot;workout-timer__reset&quot; data-control=&quot;reset&quot;&gt;&lt;/div&gt;
-    &lt;div class=&quot;workout-timer__repetitions&quot; data-repetitions&gt;Repetitions&lt;/div&gt;
-    &lt;div class=&quot;workout-timer__volume&quot; data-control=&quot;volume&quot;&gt;&lt;/div&gt;
-&lt;/div&gt;</code></pre>
+						&lt;div class=&quot;workout-timer__counter&quot; data-counter&gt;&lt;/div&gt;
+						&lt;div class=&quot;workout-timer__play-pause&quot; data-control=&quot;play-pause&quot; data-paused=&quot;true&quot;&gt;&lt;/div&gt;
+						&lt;div class=&quot;workout-timer__reset&quot; data-control=&quot;reset&quot;&gt;&lt;/div&gt;
+						&lt;div class=&quot;workout-timer__repetitions&quot; data-repetitions&gt;Repetitions&lt;/div&gt;
+						&lt;div class=&quot;workout-timer__volume&quot; data-control=&quot;volume&quot;&gt;&lt;/div&gt;
+						&lt;/div&gt;</code></pre>
 				</div>
 
 				<h2>Double Interval Countdown Timer</h2>
@@ -118,42 +127,94 @@
 
 				<div class="code-example">
 					<p>Code example:</p>
-					<pre><code>&lt;div class=&quot;workout-timer&quot; data-countdown=&quot;true&quot; data-duration=&quot;10&quot; data-duration2=&quot;5&quot; data-repetitions=&quot;2&quot; data-sound=&quot;bell_ring&quot;&gt;
-    &lt;div class=&quot;workout-timer__counter&quot; data-counter&gt;&lt;/div&gt;
-    &lt;div class=&quot;workout-timer__play-pause&quot; data-control=&quot;play-pause&quot; data-paused=&quot;true&quot;&gt;&lt;/div&gt;
-    &lt;div class=&quot;workout-timer__reset&quot; data-control=&quot;reset&quot;&gt;&lt;/div&gt;
-    &lt;div class=&quot;workout-timer__repetitions&quot; data-repetitions&gt;Repetitions&lt;/div&gt;
-    &lt;div class=&quot;workout-timer__volume&quot; data-control=&quot;volume&quot;&gt;&lt;/div&gt;
-&lt;/div&gt;</code></pre>
+					<pre><code>&lt;div class=&quot;workout-timer&quot; data-countdown=&quot;true&quot; data-duration=&quot;20&quot; data-duration2=&quot;10&quot; data-repetitions=&quot;3&quot; data-sound=&quot;bell_ring&quot;&gt;
+						&lt;div class=&quot;workout-timer__counter&quot; data-counter&gt;&lt;/div&gt;
+						&lt;div class=&quot;workout-timer__play-pause&quot; data-control=&quot;play-pause&quot; data-paused=&quot;true&quot;&gt;&lt;/div&gt;
+						&lt;div class=&quot;workout-timer__reset&quot; data-control=&quot;reset&quot;&gt;&lt;/div&gt;
+						&lt;div class=&quot;workout-timer__repetitions&quot; data-repetitions&gt;Repetitions&lt;/div&gt;
+						&lt;div class=&quot;workout-timer__volume&quot; data-control=&quot;volume&quot;&gt;&lt;/div&gt;
+						&lt;/div&gt;</code></pre>
 				</div>
+
+				<h2>Countdown Timer with Events</h2>
+				<p>Shows how you can bind code to start, pause, restart, roundComplete, and complete events.</p>
+				<div class="workout-timer-events" id="timer-example" data-countdown="true" data-duration="10" data-repetitions="2" data-sound="bell_ring">
+					<div class="workout-timer__counter" data-counter></div>
+					<div class="workout-timer__play-pause" data-control="play-pause" data-paused="true"></div>
+					<div class="workout-timer__reset" data-control="reset"></div>
+					<div class="workout-timer__repetitions" data-repetitions>Repetitions</div>
+					<div class="workout-timer__volume" data-control="volume"></div>
+				</div>
+				<textarea name="" id="event-log" class="event-log" cols="30" rows="10"></textarea>
+				<div class="code-example">
+					<p>Code example:</p>
+				<pre><code>// Define a function or functions to handle timer events.
+					var $eventLog = $('#event-log');
+					var logEvent = function(eventType, eventTarget, timer) {
+					var newLog = '"' + eventType + '" event triggered on #' + eventTarget.attr('id') + '\r\n';
+					$eventLog.val( newLog.concat( $eventLog.val() ) );
+					};
+
+					// Pass in event handlers as part of the options object
+					$('.workout-timer-events').workoutTimer({
+					onStart: logEvent,
+					onRestart: logEvent,
+					onPause: logEvent,
+					onRoundComplete: logEvent,
+					onComplete: logEvent
+					});</code></pre>
+				</div>
+
+				<p>The target function receives three parameters:</p>
+				<ul>
+					<li><strong>eventType</strong> {String}: The name of the event received</li>
+					<li><strong>eventTarget</strong> {jQuery}: The jQuery object that was the target of this event, e.g. the root element of the timer.</li>
+					<li><strong>timer</strong> {WorkoutTimer}: A reference to the workout timer that threw this event.</li>
+				</ul>
 			</div>
 		</div>
 	</div>
 </div>
 
-	<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
-	<script src="jquery.workout-timer.js"></script>
-	<script>
+<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="jquery.workout-timer.js"></script>
+<script>
 
-		// Register sound effects
-		$.WorkoutTimer.registerSound({
-			path: "audio/",
-			name: "bell_ring"
-		});
+	// Register sound effects
+	$.WorkoutTimer.registerSound({
+		path: "audio/",
+		name: "bell_ring"
+	});
 
-		$.WorkoutTimer.registerSound({
-			path: "audio/",
-			name: "door_bell"
-		});
+	$.WorkoutTimer.registerSound({
+		path: "audio/",
+		name: "door_bell"
+	});
 
-		// Init timers
-		$('.workout-timer').workoutTimer();
-	</script>
-	<script>
-		// Syntax highlighting
-		$('pre code').each(function(i, block) {
-			hljs.highlightBlock(block);
-		});
-	</script>
+	// Init timers
+	$('.workout-timer').workoutTimer();
+
+	var $eventLog = $('#event-log');
+	var logEvent = function(eventType, eventTarget, timer) {
+		var newLog = '"' + eventType + '" event triggered on #' + eventTarget.attr('id') + '\r\n';
+		$eventLog.val( newLog.concat( $eventLog.val() ) );
+	};
+
+	$('.workout-timer-events').workoutTimer({
+		onStart: logEvent,
+		onRestart: logEvent,
+		onPause: logEvent,
+		onRoundComplete: logEvent,
+		onComplete: logEvent
+	});
+</script>
+<script>
+	// Syntax highlighting
+	$('pre code').each(function(i, block) {
+		hljs.highlightBlock(block);
+	});
+
+
+</script>
 </body>
 </html>
