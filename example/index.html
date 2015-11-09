@@ -8,6 +8,15 @@
 
 	<!-- Example-page styles -->
 	<style>
+		body {
+			margin-bottom: 100px;
+		}
+
+		.event-log {
+			width: 100%;
+			margin: 20px 0;
+		}
+
 		.code-example {
 			margin: 20px 0;
 		}
@@ -126,6 +135,42 @@
     &lt;div class=&quot;workout-timer__volume&quot; data-control=&quot;volume&quot;&gt;&lt;/div&gt;
 &lt;/div&gt;</code></pre>
 				</div>
+
+				<h2>Countdown Timer with Events</h2>
+				<p>Shows how you can bind code to start, pause, restart, roundComplete, and complete events.</p>
+				<div class="workout-timer-events" id="timer-example" data-countdown="true" data-duration="10" data-repetitions="2" data-sound="bell_ring">
+					<div class="workout-timer__counter" data-counter></div>
+					<div class="workout-timer__play-pause" data-control="play-pause" data-paused="true"></div>
+					<div class="workout-timer__reset" data-control="reset"></div>
+					<div class="workout-timer__repetitions" data-repetitions>Repetitions</div>
+					<div class="workout-timer__volume" data-control="volume"></div>
+				</div>
+				<textarea name="" id="event-log" class="event-log" cols="30" rows="10"></textarea>
+				<div class="code-example">
+					<p>Code example:</p>
+				<pre><code>// Define a function or functions to handle timer events.
+var $eventLog = $('#event-log');
+var logEvent = function(eventType, eventTarget, timer) {
+    var newLog = '"' + eventType + '" event triggered on #' + eventTarget.attr('id') + '\r\n';
+    $eventLog.val( newLog.concat( $eventLog.val() ) );
+};
+
+// Pass in event handlers as part of the options object
+$('.workout-timer-events').workoutTimer({
+    onStart: logEvent,
+    onRestart: logEvent,
+    onPause: logEvent,
+    onRoundComplete: logEvent,
+    onComplete: logEvent
+});</code></pre>
+				</div>
+
+				<p>The target function receives three parameters:</p>
+				<ul>
+					<li><strong>eventType</strong> {String}: The name of the event received</li>
+					<li><strong>eventTarget</strong> {jQuery}: The jQuery object that was the target of this event, e.g. the root element of the timer.</li>
+					<li><strong>timer</strong> {WorkoutTimer}: A reference to the workout timer that threw this event.</li>
+				</ul>
 			</div>
 		</div>
 	</div>
@@ -148,12 +193,28 @@
 
 		// Init timers
 		$('.workout-timer').workoutTimer();
+
+		var $eventLog = $('#event-log');
+		var logEvent = function(eventType, eventTarget, timer) {
+			var newLog = '"' + eventType + '" event triggered on #' + eventTarget.attr('id') + '\r\n';
+			$eventLog.val( newLog.concat( $eventLog.val() ) );
+		};
+
+		$('.workout-timer-events').workoutTimer({
+			onStart: logEvent,
+			onRestart: logEvent,
+			onPause: logEvent,
+			onRoundComplete: logEvent,
+			onComplete: logEvent
+		});
 	</script>
 	<script>
 		// Syntax highlighting
 		$('pre code').each(function(i, block) {
 			hljs.highlightBlock(block);
 		});
+
+
 	</script>
 </body>
 </html>

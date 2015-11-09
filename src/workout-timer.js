@@ -69,7 +69,12 @@
 		duration: 10,
 		duration2: 0,
 		repetitions: 0,
-		sound: null
+		sound: null,
+		onPlay: function() {},
+		onPause: function() {},
+		onRestart: function() {},
+		onRoundComplete: function() {},
+		onComplete: function() {}
 	};
 
 	/**
@@ -89,6 +94,19 @@
 		{ name: 'level3', level: 2 },
 		{ name: 'mute', level: 0 }
 	];
+
+	/**
+	 * An enum of events thrown by this plugin
+	 * @enum
+	 * @type {{START: string, PAUSE: string, RESTART: string, COMPLETE: string}}
+	 */
+	WorkoutTimer.events = {
+		START: 'start',
+		PAUSE: 'pause',
+		RESTART: 'restart',
+		ROUND_COMPLETE: 'roundComplete',
+		COMPLETE: 'complete'
+	};
 
 	/**
 	 * Advances to the next volume level (1 -> 2 -> 3 -> mute). Affects all instances of WorkoutTimer.
@@ -240,13 +258,19 @@
 	 * Toggles between playing and paused states
 	 */
 	WorkoutTimer.prototype.toggleRunnerState = function() {
+		this.counter.runner('toggle');
+
 		if ( this.controls.playPause.attr('data-paused') === 'true') {
 			this.controls.playPause.attr('data-paused', 'false');
+			if (this.options.onStart && typeof(this.options.onStart) === 'function') {
+				this.options.onStart(WorkoutTimer.events.START, this.domElement.eq(0), this);
+			}
 		} else {
 			this.controls.playPause.attr('data-paused', 'true');
+			if (this.options.onPause && typeof(this.options.onPause) === 'function') {
+				this.options.onPause(WorkoutTimer.events.PAUSE, this.domElement.eq(0), this);
+			}
 		}
-
-		this.counter.runner('toggle');
 	};
 
 	/**
@@ -262,6 +286,10 @@
 	WorkoutTimer.prototype.resetRepetitions = function() {
 		this.options.repetitions = this.options.originalRepetitions;
 		this.updateRepetitionCounter();
+
+		if (this.options.onRestart && typeof(this.options.onRestart) === 'function') {
+			this.options.onRestart(WorkoutTimer.events.RESTART, this.domElement.eq(0), this);
+		}
 	};
 
 	/**
@@ -271,7 +299,10 @@
 		// Play sound if configured
 		if ( this.options.sound ) {
 			ion.sound.play( this.options.sound, { volume: this.options.volume } );
-			console.log(this.options.volume);
+		}
+
+		if (this.options.onRoundComplete && typeof(this.options.onRoundComplete) === 'function') {
+			this.options.onRoundComplete(WorkoutTimer.events.ROUND_COMPLETE, this.domElement.eq(0), this);
 		}
 
 		if (this.options.repetitions > 0) {
@@ -309,6 +340,10 @@
 	 */
 	WorkoutTimer.prototype.timerComplete = function() {
 		this.counter.attr('data-state', 'complete');
+
+		if (this.options.onComplete && typeof(this.options.onComplete) === 'function') {
+			this.options.onComplete(WorkoutTimer.events.COMPLETE, this.domElement.eq(0), this);
+		}
 	};
 
 	/**
