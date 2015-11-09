@@ -1,299 +1,299 @@
-/*! workout-timer - v0.0.1 - 2015-10-07
-* Copyright (c) 2015 Dave Rodriguez; Licensed MIT */
+/*! workout-timer - v0.0.1 - 2015-11-09
+ * Copyright (c) 2015 Dave Rodriguez; Licensed MIT */
 /*!
  * jQuery-runner - v2.3.3 - 2014-08-06
  * https://github.com/jylauril/jquery-runner/
  * Copyright (c) 2014 Jyrki Laurila <https://github.com/jylauril>
  */
 (function() {
-  var Runner, formatTime, meta, pad, runners, uid, _$, _requestAnimationFrame, _uid;
+    var Runner, formatTime, meta, pad, runners, uid, _$, _requestAnimationFrame, _uid;
 
-  meta = {
-    version: "2.3.3",
-    name: "jQuery-runner"
-  };
-
-  _$ = this.jQuery || this.Zepto || this.$;
-
-  if (!(_$ && _$.fn)) {
-    throw new Error('[' + meta.name + '] jQuery or jQuery-like library is required for this plugin to work');
-  }
-
-  runners = {};
-
-  pad = function(num) {
-    return (num < 10 ? '0' : '') + num;
-  };
-
-  _uid = 1;
-
-  uid = function() {
-    return 'runner' + _uid++;
-  };
-
-  _requestAnimationFrame = (function(win, raf) {
-    return win['r' + raf] || win['webkitR' + raf] || win['mozR' + raf] || win['msR' + raf] || function(fn) {
-      return setTimeout(fn, 30);
+    meta = {
+        version: "2.3.3",
+        name: "jQuery-runner"
     };
-  })(this, 'equestAnimationFrame');
 
-  formatTime = function(time, settings) {
-    var i, len, ms, output, prefix, separator, step, steps, value, _i, _len;
-    settings = settings || {};
-    steps = [3600000, 60000, 1000, 10];
-    separator = ['', ':', ':', '.'];
-    prefix = '';
-    output = '';
-    ms = settings.milliseconds;
-    len = steps.length;
-    value = 0;
-    if (time < 0) {
-      time = Math.abs(time);
-      prefix = '-';
-    }
-    for (i = _i = 0, _len = steps.length; _i < _len; i = ++_i) {
-      step = steps[i];
-      value = 0;
-      if (time >= step) {
-        value = Math.floor(time / step);
-        time -= value * step;
-      }
-      if ((value || i > 1 || output) && (i !== len - 1 || ms)) {
-        output += (output ? separator[i] : '') + pad(value);
-      }
-    }
-    return prefix + output;
-  };
+    _$ = this.jQuery || this.Zepto || this.$;
 
-  Runner = (function() {
-    function Runner(items, options, start) {
-      var id;
-      if (!(this instanceof Runner)) {
-        return new Runner(items, options, start);
-      }
-      this.items = items;
-      id = this.id = uid();
-      this.settings = _$.extend({}, this.settings, options);
-      runners[id] = this;
-      items.each(function(index, element) {
-        _$(element).data('runner', id);
-      });
-      this.value(this.settings.startAt);
-      if (start || this.settings.autostart) {
-        this.start();
-      }
+    if (!(_$ && _$.fn)) {
+        throw new Error('[' + meta.name + '] jQuery or jQuery-like library is required for this plugin to work');
     }
 
-    Runner.prototype.running = false;
+    runners = {};
 
-    Runner.prototype.updating = false;
-
-    Runner.prototype.finished = false;
-
-    Runner.prototype.interval = null;
-
-    Runner.prototype.total = 0;
-
-    Runner.prototype.lastTime = 0;
-
-    Runner.prototype.startTime = 0;
-
-    Runner.prototype.lastLap = 0;
-
-    Runner.prototype.lapTime = 0;
-
-    Runner.prototype.settings = {
-      autostart: false,
-      countdown: false,
-      stopAt: null,
-      startAt: 0,
-      milliseconds: true,
-      format: null
+    pad = function(num) {
+        return (num < 10 ? '0' : '') + num;
     };
 
-    Runner.prototype.value = function(value) {
-      this.items.each((function(_this) {
-        return function(item, element) {
-          var action;
-          item = _$(element);
-          action = item.is('input') ? 'val' : 'text';
-          item[action](_this.format(value));
-        };
-      })(this));
+    _uid = 1;
+
+    uid = function() {
+        return 'runner' + _uid++;
     };
 
-    Runner.prototype.format = function(value) {
-      var format;
-      format = this.settings.format;
-      format = _$.isFunction(format) ? format : formatTime;
-      return format(value, this.settings);
-    };
+    _requestAnimationFrame = (function(win, raf) {
+        return win['r' + raf] || win['webkitR' + raf] || win['mozR' + raf] || win['msR' + raf] || function(fn) {
+                return setTimeout(fn, 30);
+            };
+    })(this, 'equestAnimationFrame');
 
-    Runner.prototype.update = function() {
-      var countdown, delta, settings, stopAt, time;
-      if (!this.updating) {
-        this.updating = true;
-        settings = this.settings;
-        time = _$.now();
-        stopAt = settings.stopAt;
-        countdown = settings.countdown;
-        delta = time - this.lastTime;
-        this.lastTime = time;
-        if (countdown) {
-          this.total -= delta;
-        } else {
-          this.total += delta;
+    formatTime = function(time, settings) {
+        var i, len, ms, output, prefix, separator, step, steps, value, _i, _len;
+        settings = settings || {};
+        steps = [3600000, 60000, 1000, 10];
+        separator = ['', ':', ':', '.'];
+        prefix = '';
+        output = '';
+        ms = settings.milliseconds;
+        len = steps.length;
+        value = 0;
+        if (time < 0) {
+            time = Math.abs(time);
+            prefix = '-';
         }
-        if (stopAt !== null && ((countdown && this.total <= stopAt) || (!countdown && this.total >= stopAt))) {
-          this.total = stopAt;
-          this.finished = true;
-          this.stop();
-          this.fire('runnerFinish');
-        }
-        this.value(this.total);
-        this.updating = false;
-      }
-    };
-
-    Runner.prototype.fire = function(event) {
-      this.items.trigger(event, this.info());
-    };
-
-    Runner.prototype.start = function() {
-      var step;
-      if (!this.running) {
-        this.running = true;
-        if (!this.startTime || this.finished) {
-          this.reset();
-        }
-        this.lastTime = _$.now();
-        step = (function(_this) {
-          return function() {
-            if (_this.running) {
-              _this.update();
-              _requestAnimationFrame(step);
+        for (i = _i = 0, _len = steps.length; _i < _len; i = ++_i) {
+            step = steps[i];
+            value = 0;
+            if (time >= step) {
+                value = Math.floor(time / step);
+                time -= value * step;
             }
-          };
-        })(this);
-        _requestAnimationFrame(step);
-        this.fire('runnerStart');
-      }
-    };
-
-    Runner.prototype.stop = function() {
-      if (this.running) {
-        this.running = false;
-        this.update();
-        this.fire('runnerStop');
-      }
-    };
-
-    Runner.prototype.toggle = function() {
-      if (this.running) {
-        this.stop();
-      } else {
-        this.start();
-      }
-    };
-
-    Runner.prototype.lap = function() {
-      var lap, last;
-      last = this.lastTime;
-      lap = last - this.lapTime;
-      if (this.settings.countdown) {
-        lap = -lap;
-      }
-      if (this.running || lap) {
-        this.lastLap = lap;
-        this.lapTime = last;
-      }
-      last = this.format(this.lastLap);
-      this.fire('runnerLap');
-      return last;
-    };
-
-    Runner.prototype.reset = function(stop) {
-      var nowTime;
-      if (stop) {
-        this.stop();
-      }
-      nowTime = _$.now();
-      if (typeof this.settings.startAt === 'number' && !this.settings.countdown) {
-        nowTime -= this.settings.startAt;
-      }
-      this.startTime = this.lapTime = this.lastTime = nowTime;
-      this.total = this.settings.startAt;
-      this.value(this.total);
-      this.finished = false;
-      this.fire('runnerReset');
-    };
-
-    Runner.prototype.info = function() {
-      var lap;
-      lap = this.lastLap || 0;
-      return {
-        running: this.running,
-        finished: this.finished,
-        time: this.total,
-        formattedTime: this.format(this.total),
-        startTime: this.startTime,
-        lapTime: lap,
-        formattedLapTime: this.format(lap),
-        settings: this.settings
-      };
-    };
-
-    return Runner;
-
-  })();
-
-  _$.fn.runner = function(method, options, start) {
-    var id, runner;
-    if (!method) {
-      method = 'init';
-    }
-    if (typeof method === 'object') {
-      start = options;
-      options = method;
-      method = 'init';
-    }
-    id = this.data('runner');
-    runner = id ? runners[id] : false;
-    switch (method) {
-      case 'init':
-        new Runner(this, options, start);
-        break;
-      case 'info':
-        if (runner) {
-          return runner.info();
+            if ((value || i > 1 || output) && (i !== len - 1 || ms)) {
+                output += (output ? separator[i] : '') + pad(value);
+            }
         }
-        break;
-      case 'reset':
-        if (runner) {
-          runner.reset(options);
-        }
-        break;
-      case 'lap':
-        if (runner) {
-          return runner.lap();
-        }
-        break;
-      case 'start':
-      case 'stop':
-      case 'toggle':
-        if (runner) {
-          return runner[method]();
-        }
-        break;
-      case 'version':
-        return meta.version;
-      default:
-        _$.error('[' + meta.name + '] Method ' + method + ' does not exist');
-    }
-    return this;
-  };
+        return prefix + output;
+    };
 
-  _$.fn.runner.format = formatTime;
+    Runner = (function() {
+        function Runner(items, options, start) {
+            var id;
+            if (!(this instanceof Runner)) {
+                return new Runner(items, options, start);
+            }
+            this.items = items;
+            id = this.id = uid();
+            this.settings = _$.extend({}, this.settings, options);
+            runners[id] = this;
+            items.each(function(index, element) {
+                _$(element).data('runner', id);
+            });
+            this.value(this.settings.startAt);
+            if (start || this.settings.autostart) {
+                this.start();
+            }
+        }
+
+        Runner.prototype.running = false;
+
+        Runner.prototype.updating = false;
+
+        Runner.prototype.finished = false;
+
+        Runner.prototype.interval = null;
+
+        Runner.prototype.total = 0;
+
+        Runner.prototype.lastTime = 0;
+
+        Runner.prototype.startTime = 0;
+
+        Runner.prototype.lastLap = 0;
+
+        Runner.prototype.lapTime = 0;
+
+        Runner.prototype.settings = {
+            autostart: false,
+            countdown: false,
+            stopAt: null,
+            startAt: 0,
+            milliseconds: true,
+            format: null
+        };
+
+        Runner.prototype.value = function(value) {
+            this.items.each((function(_this) {
+                return function(item, element) {
+                    var action;
+                    item = _$(element);
+                    action = item.is('input') ? 'val' : 'text';
+                    item[action](_this.format(value));
+                };
+            })(this));
+        };
+
+        Runner.prototype.format = function(value) {
+            var format;
+            format = this.settings.format;
+            format = _$.isFunction(format) ? format : formatTime;
+            return format(value, this.settings);
+        };
+
+        Runner.prototype.update = function() {
+            var countdown, delta, settings, stopAt, time;
+            if (!this.updating) {
+                this.updating = true;
+                settings = this.settings;
+                time = _$.now();
+                stopAt = settings.stopAt;
+                countdown = settings.countdown;
+                delta = time - this.lastTime;
+                this.lastTime = time;
+                if (countdown) {
+                    this.total -= delta;
+                } else {
+                    this.total += delta;
+                }
+                if (stopAt !== null && ((countdown && this.total <= stopAt) || (!countdown && this.total >= stopAt))) {
+                    this.total = stopAt;
+                    this.finished = true;
+                    this.stop();
+                    this.fire('runnerFinish');
+                }
+                this.value(this.total);
+                this.updating = false;
+            }
+        };
+
+        Runner.prototype.fire = function(event) {
+            this.items.trigger(event, this.info());
+        };
+
+        Runner.prototype.start = function() {
+            var step;
+            if (!this.running) {
+                this.running = true;
+                if (!this.startTime || this.finished) {
+                    this.reset();
+                }
+                this.lastTime = _$.now();
+                step = (function(_this) {
+                    return function() {
+                        if (_this.running) {
+                            _this.update();
+                            _requestAnimationFrame(step);
+                        }
+                    };
+                })(this);
+                _requestAnimationFrame(step);
+                this.fire('runnerStart');
+            }
+        };
+
+        Runner.prototype.stop = function() {
+            if (this.running) {
+                this.running = false;
+                this.update();
+                this.fire('runnerStop');
+            }
+        };
+
+        Runner.prototype.toggle = function() {
+            if (this.running) {
+                this.stop();
+            } else {
+                this.start();
+            }
+        };
+
+        Runner.prototype.lap = function() {
+            var lap, last;
+            last = this.lastTime;
+            lap = last - this.lapTime;
+            if (this.settings.countdown) {
+                lap = -lap;
+            }
+            if (this.running || lap) {
+                this.lastLap = lap;
+                this.lapTime = last;
+            }
+            last = this.format(this.lastLap);
+            this.fire('runnerLap');
+            return last;
+        };
+
+        Runner.prototype.reset = function(stop) {
+            var nowTime;
+            if (stop) {
+                this.stop();
+            }
+            nowTime = _$.now();
+            if (typeof this.settings.startAt === 'number' && !this.settings.countdown) {
+                nowTime -= this.settings.startAt;
+            }
+            this.startTime = this.lapTime = this.lastTime = nowTime;
+            this.total = this.settings.startAt;
+            this.value(this.total);
+            this.finished = false;
+            this.fire('runnerReset');
+        };
+
+        Runner.prototype.info = function() {
+            var lap;
+            lap = this.lastLap || 0;
+            return {
+                running: this.running,
+                finished: this.finished,
+                time: this.total,
+                formattedTime: this.format(this.total),
+                startTime: this.startTime,
+                lapTime: lap,
+                formattedLapTime: this.format(lap),
+                settings: this.settings
+            };
+        };
+
+        return Runner;
+
+    })();
+
+    _$.fn.runner = function(method, options, start) {
+        var id, runner;
+        if (!method) {
+            method = 'init';
+        }
+        if (typeof method === 'object') {
+            start = options;
+            options = method;
+            method = 'init';
+        }
+        id = this.data('runner');
+        runner = id ? runners[id] : false;
+        switch (method) {
+            case 'init':
+                new Runner(this, options, start);
+                break;
+            case 'info':
+                if (runner) {
+                    return runner.info();
+                }
+                break;
+            case 'reset':
+                if (runner) {
+                    runner.reset(options);
+                }
+                break;
+            case 'lap':
+                if (runner) {
+                    return runner.lap();
+                }
+                break;
+            case 'start':
+            case 'stop':
+            case 'toggle':
+                if (runner) {
+                    return runner[method]();
+                }
+                break;
+            case 'version':
+                return meta.version;
+            default:
+                _$.error('[' + meta.name + '] Method ' + method + ' does not exist');
+        }
+        return this;
+    };
+
+    _$.fn.runner.format = formatTime;
 
 }).call(this);
 
@@ -1362,321 +1362,356 @@
 } (window, navigator, window.jQuery || window.$));
 
 (function ($) {
-	/**
-	 * @param {*|HTMLElement} target
-	 * @param {Object} opts
-	 * @constructor
-	 */
-	var WorkoutTimer = function(target, opts) {
+    /**
+     * @param {*|HTMLElement} target
+     * @param {Object} opts
+     * @constructor
+     */
+    var WorkoutTimer = function(target, opts) {
 
-		/**
-		 * The DOM element associated with this timer
-		 * @type {*|HTMLElement}
-		 */
-		this.domElement = $(target);
+        /**
+         * The DOM element associated with this timer
+         * @type {*|HTMLElement}
+         */
+        this.domElement = $(target);
 
-		/**
-		 *
-		 * @type {Object}
-		 */
-		this.options = opts;
+        /**
+         *
+         * @type {Object}
+         */
+        this.options = opts;
 
-		/**
-		 * Holds the original number of repetitions in case the timer is reset
-		 * @type {number|Number|*}
-		 */
-		this.options.originalRepetitions = this.options.repetitions;
+        /**
+         * Holds the original number of repetitions in case the timer is reset
+         * @type {number|Number|*}
+         */
+        this.options.originalRepetitions = this.options.repetitions;
 
-		WorkoutTimer.instances.push(this);
+        WorkoutTimer.instances.push(this);
 
-		this.setOptionsFromDataAttributes();
+        this.setOptionsFromDataAttributes();
 
-		/**
-		 * The field that displays the current time in this timer
-		 * @type {*|HTMLElement}
-		 */
-		this.counter = this.domElement.find( '[data-counter]' ) || null;
-		this.counter.attr('data-state', 'base');
+        /**
+         * The field that displays the current time in this timer
+         * @type {*|HTMLElement}
+         */
+        this.counter = this.domElement.find( '[data-counter]' ) || null;
+        this.counter.attr('data-state', 'base');
 
-		if ( this.options.sound ) {
-			this.options.volume = WorkoutTimer.volumeStates[0].level;
-		}
+        if ( this.options.sound ) {
+            this.options.volume = WorkoutTimer.volumeStates[0].level;
+        }
 
-		this.initRunner();
+        this.initRunner();
 
-		this.initControls();
-		this.updateRepetitionCounter();
+        this.initControls();
+        this.updateRepetitionCounter();
 
-		this.updateVolumeCounter();
-	};
+        this.updateVolumeCounter();
+    };
 
-	/**
-	 * Default plugin options
-	 * @type {{countdown: boolean, duration: number, duration2: number, repetitions: number, controls: {counter: string, playPause: string, repetitionCounter: string, volume: string}}}
-	 */
-	WorkoutTimer.defaults = {
-		countdown: false,
-		autostart: false,
-		duration: 10,
-		duration2: 0,
-		repetitions: 0,
-		sound: null
-	};
+    /**
+     * Default plugin options
+     * @type {{countdown: boolean, duration: number, duration2: number, repetitions: number, controls: {counter: string, playPause: string, repetitionCounter: string, volume: string}}}
+     */
+    WorkoutTimer.defaults = {
+        countdown: false,
+        autostart: false,
+        duration: 10,
+        duration2: 0,
+        repetitions: 0,
+        sound: null,
+        onPlay: function() {},
+        onPause: function() {},
+        onRestart: function() {},
+        onRoundComplete: function() {},
+        onComplete: function() {}
+    };
 
-	/**
-	 * Stores a list of all known WorkoutTimer instances
-	 * @type {Array}
-	 */
-	WorkoutTimer.instances = [];
+    /**
+     * Stores a list of all known WorkoutTimer instances
+     * @type {Array}
+     */
+    WorkoutTimer.instances = [];
 
-	/**
-	 * Available volume states. This property is shared among all instances of WorkoutTimer.
-	 * @static
-	 * @type {Object[]}
-	 */
-	WorkoutTimer.volumeStates = [
-		{ name: 'level1', level: 0.5 },
-		{ name: 'level2', level: 1 },
-		{ name: 'level3', level: 2 },
-		{ name: 'mute', level: 0 }
-	];
+    /**
+     * Available volume states. This property is shared among all instances of WorkoutTimer.
+     * @static
+     * @type {Object[]}
+     */
+    WorkoutTimer.volumeStates = [
+        { name: 'level1', level: 0.5 },
+        { name: 'level2', level: 1 },
+        { name: 'level3', level: 2 },
+        { name: 'mute', level: 0 }
+    ];
 
-	/**
-	 * Advances to the next volume level (1 -> 2 -> 3 -> mute). Affects all instances of WorkoutTimer.
-	 * @static
-	 */
-	WorkoutTimer.toggleVolume = function() {
-		WorkoutTimer.volumeStates.push( WorkoutTimer.volumeStates.shift() );
+    /**
+     * An enum of events thrown by this plugin
+     * @enum
+     * @type {{START: string, PAUSE: string, RESTART: string, COMPLETE: string}}
+     */
+    WorkoutTimer.events = {
+        START: 'start',
+        PAUSE: 'pause',
+        RESTART: 'restart',
+        ROUND_COMPLETE: 'roundComplete',
+        COMPLETE: 'complete'
+    };
 
-		for ( var i = 0; i < WorkoutTimer.instances.length; i++ ) {
-			var nextInstance = WorkoutTimer.instances[i];
-			nextInstance.options.volume = WorkoutTimer.volumeStates[0].level;
-			nextInstance.updateVolumeCounter();
-		}
-	};
+    /**
+     * Advances to the next volume level (1 -> 2 -> 3 -> mute). Affects all instances of WorkoutTimer.
+     * @static
+     */
+    WorkoutTimer.toggleVolume = function() {
+        WorkoutTimer.volumeStates.push( WorkoutTimer.volumeStates.shift() );
 
-	/**
-	 * Default sound options
-	 * @type {{path: string, preload: boolean}}
-	 */
-	WorkoutTimer.soundDefaults = {
-		path: 'audio/',
-		preload: true
-	};
+        for ( var i = 0; i < WorkoutTimer.instances.length; i++ ) {
+            var nextInstance = WorkoutTimer.instances[i];
+            nextInstance.options.volume = WorkoutTimer.volumeStates[0].level;
+            nextInstance.updateVolumeCounter();
+        }
+    };
 
-	/**
-	 * Registers a sound to be used with the plugin. To specify a sound, register it using $.WorkoutTimer.registerSound()
-	 * and then set the data-sound attribute of your timer (or pass the sound name in as a configuration variable).
-	 * @param soundObj
-	 * @static
-	 */
-	WorkoutTimer.registerSound = function(opts) {
-		var soundOptions = $.extend( {}, WorkoutTimer.soundDefaults, opts );
+    /**
+     * Default sound options
+     * @type {{path: string, preload: boolean}}
+     */
+    WorkoutTimer.soundDefaults = {
+        path: 'audio/',
+        preload: true
+    };
 
-		soundOptions.volume = WorkoutTimer.volumeStates[0].level;
+    /**
+     * Registers a sound to be used with the plugin. To specify a sound, register it using $.WorkoutTimer.registerSound()
+     * and then set the data-sound attribute of your timer (or pass the sound name in as a configuration variable).
+     * @param soundObj
+     * @static
+     */
+    WorkoutTimer.registerSound = function(opts) {
+        var soundOptions = $.extend( {}, WorkoutTimer.soundDefaults, opts );
 
-		if ( soundOptions.name ) {
-			soundOptions.sounds = [{
-				name: soundOptions.name
-			}];
-		}
+        soundOptions.volume = WorkoutTimer.volumeStates[0].level;
 
-		ion.sound(soundOptions);
-	};
+        if ( soundOptions.name ) {
+            soundOptions.sounds = [{
+                name: soundOptions.name
+            }];
+        }
 
-	/**
-	 * Overrides the passed in configuration options by attempting to parse properties from data-attributes
-	 * attached to the DOM element
-	 */
-	WorkoutTimer.prototype.setOptionsFromDataAttributes = function() {
-		var dataAttributes = this.domElement.data();
+        ion.sound(soundOptions);
+    };
 
-		if (dataAttributes.autostart) {
-			this.options.autostart = dataAttributes.autostart;
-		}
+    /**
+     * Overrides the passed in configuration options by attempting to parse properties from data-attributes
+     * attached to the DOM element
+     */
+    WorkoutTimer.prototype.setOptionsFromDataAttributes = function() {
+        var dataAttributes = this.domElement.data();
 
-		if (dataAttributes.countdown) {
-			this.options.countdown = dataAttributes.countdown;
-		}
+        if (dataAttributes.autostart) {
+            this.options.autostart = dataAttributes.autostart;
+        }
 
-		if (dataAttributes.duration) {
-			this.options.duration = parseFloat(dataAttributes.duration);
-		}
+        if (dataAttributes.countdown) {
+            this.options.countdown = dataAttributes.countdown;
+        }
 
-		if (dataAttributes.duration2) {
-			this.options.duration2 = parseFloat(dataAttributes.duration2);
-		}
+        if (dataAttributes.duration) {
+            this.options.duration = parseFloat(dataAttributes.duration);
+        }
 
-		if (dataAttributes.repetitions) {
-			this.options.repetitions = parseFloat(dataAttributes.repetitions);
-			this.options.originalRepetitions = this.options.repetitions;
-		}
+        if (dataAttributes.duration2) {
+            this.options.duration2 = parseFloat(dataAttributes.duration2);
+        }
 
-		if (dataAttributes.sound) {
-			this.options.sound = dataAttributes.sound;
-		}
-	};
+        if (dataAttributes.repetitions) {
+            this.options.repetitions = parseFloat(dataAttributes.repetitions);
+            this.options.originalRepetitions = this.options.repetitions;
+        }
 
-	/**
-	 * Sets up the jQuery.runner to carry out the next interval
-	 * @param {Number} duration The next duration to count to
-	 * @param {Boolean} [autostart=false] Starts the timer regardless of whether options.autostart is true
-	 */
-	WorkoutTimer.prototype.initRunner = function(duration, autostart) {
-		var instance = this;
+        if (dataAttributes.sound) {
+            this.options.sound = dataAttributes.sound;
+        }
+    };
 
-		if (!duration) {
-			duration = this.options.duration;
-		}
+    /**
+     * Sets up the jQuery.runner to carry out the next interval
+     * @param {Number} duration The next duration to count to
+     * @param {Boolean} [autostart=false] Starts the timer regardless of whether options.autostart is true
+     */
+    WorkoutTimer.prototype.initRunner = function(duration, autostart) {
+        var instance = this;
 
-		var runnerOpts = {
-			autostart: this.options.autostart || autostart,
-			countdown: this.options.countdown,
-			startAt: this.options.countdown ? duration * 1000 : 0
-		};
+        if (!duration) {
+            duration = this.options.duration;
+        }
 
-		// A value of -1 for repetitions means this counter will run indefinitely
-		if (this.options.repetitions >= 0) {
-			if (this.options.countdown) {
-				runnerOpts.stopAt = 0;
-			} else {
-				runnerOpts.stopAt = duration * 1000;
-			}
-		}
+        var runnerOpts = {
+            autostart: this.options.autostart || autostart,
+            countdown: this.options.countdown,
+            startAt: this.options.countdown ? duration * 1000 : 0
+        };
 
-		this.counter.runner(runnerOpts);
+        // A value of -1 for repetitions means this counter will run indefinitely
+        if (this.options.repetitions >= 0) {
+            if (this.options.countdown) {
+                runnerOpts.stopAt = 0;
+            } else {
+                runnerOpts.stopAt = duration * 1000;
+            }
+        }
 
-		// Since the runner is recycled, make sure the finish listener is only bound once
-		this.counter.off('runnerFinish').on('runnerFinish', function() {
-			instance.intervalComplete();
-		});
-	};
+        this.counter.runner(runnerOpts);
 
-	WorkoutTimer.prototype.initControls = function() {
-		var instance = this;
-		this.controls = this.controls || {};
+        // Since the runner is recycled, make sure the finish listener is only bound once
+        this.counter.off('runnerFinish').on('runnerFinish', function() {
+            instance.intervalComplete();
+        });
+    };
 
-		this.controls.playPause = this.domElement.find( '[data-control=play-pause]' ) || null;
-		this.controls.reset = this.domElement.find( '[data-control=reset]' ) || null;
-		this.controls.repetitionCounter = this.domElement.find( '[data-repetitions]' ) || null;
-		this.controls.volume = this.domElement.find( '[data-control=volume]' ) || null;
+    WorkoutTimer.prototype.initControls = function() {
+        var instance = this;
+        this.controls = this.controls || {};
 
-		this.controls.playPause.on('click', function() {
-			instance.toggleRunnerState();
-		});
+        this.controls.playPause = this.domElement.find( '[data-control=play-pause]' ) || null;
+        this.controls.reset = this.domElement.find( '[data-control=reset]' ) || null;
+        this.controls.repetitionCounter = this.domElement.find( '[data-repetitions]' ) || null;
+        this.controls.volume = this.domElement.find( '[data-control=volume]' ) || null;
 
-		this.resetPlayPauseControl();
+        this.controls.playPause.on('click', function() {
+            instance.toggleRunnerState();
+        });
 
-		this.controls.reset.on('click', function() {
-			instance.counter.runner('reset', true);
-			instance.resetPlayPauseControl();
-			instance.resetRepetitions();
-		});
+        this.resetPlayPauseControl();
 
-		this.controls.volume.on('click', function() {
-			WorkoutTimer.toggleVolume();
-		});
-	};
+        this.controls.reset.on('click', function() {
+            instance.counter.runner('reset', true);
+            instance.resetPlayPauseControl();
+            instance.resetRepetitions();
+        });
 
-	WorkoutTimer.prototype.resetPlayPauseControl = function() {
-		// TODO: Move this somewhere more appropriate
-		if (this.options.autostart) {
-			this.controls.playPause.attr('data-paused', 'false');
-		} else {
-			this.controls.playPause.attr('data-paused', 'true');
-		}
-	};
+        this.controls.volume.on('click', function() {
+            WorkoutTimer.toggleVolume();
+        });
+    };
 
-	/**
-	 * Toggles between playing and paused states
-	 */
-	WorkoutTimer.prototype.toggleRunnerState = function() {
-		if ( this.controls.playPause.attr('data-paused') === 'true') {
-			this.controls.playPause.attr('data-paused', 'false');
-		} else {
-			this.controls.playPause.attr('data-paused', 'true');
-		}
+    WorkoutTimer.prototype.resetPlayPauseControl = function() {
+        // TODO: Move this somewhere more appropriate
+        if (this.options.autostart) {
+            this.controls.playPause.attr('data-paused', 'false');
+        } else {
+            this.controls.playPause.attr('data-paused', 'true');
+        }
+    };
 
-		this.counter.runner('toggle');
-	};
+    /**
+     * Toggles between playing and paused states
+     */
+    WorkoutTimer.prototype.toggleRunnerState = function() {
+        this.counter.runner('toggle');
 
-	/**
-	 * Updates the number of repetitions remaining counter
-	 */
-	WorkoutTimer.prototype.updateRepetitionCounter = function() {
-		this.controls.repetitionCounter.html( this.options.repetitions >= 0 ? this.options.repetitions : '&infin;' );
-	};
+        if ( this.controls.playPause.attr('data-paused') === 'true') {
+            this.controls.playPause.attr('data-paused', 'false');
+            if (this.options.onStart && typeof(this.options.onStart) === 'function') {
+                this.options.onStart(WorkoutTimer.events.START, this.domElement.eq(0), this);
+            }
+        } else {
+            this.controls.playPause.attr('data-paused', 'true');
+            if (this.options.onPause && typeof(this.options.onPause) === 'function') {
+                this.options.onPause(WorkoutTimer.events.PAUSE, this.domElement.eq(0), this);
+            }
+        }
+    };
 
-	/**
-	 * Resets the timer back to the original number of repetitions
-	 */
-	WorkoutTimer.prototype.resetRepetitions = function() {
-		this.options.repetitions = this.options.originalRepetitions;
-		this.updateRepetitionCounter();
-	};
+    /**
+     * Updates the number of repetitions remaining counter
+     */
+    WorkoutTimer.prototype.updateRepetitionCounter = function() {
+        this.controls.repetitionCounter.html( this.options.repetitions >= 0 ? this.options.repetitions : '&infin;' );
+    };
 
-	/**
-	 *
-	 */
-	WorkoutTimer.prototype.intervalComplete = function() {
-		// Play sound if configured
-		if ( this.options.sound ) {
-			ion.sound.play( this.options.sound, { volume: this.options.volume } );
-			console.log(this.options.volume);
-		}
+    /**
+     * Resets the timer back to the original number of repetitions
+     */
+    WorkoutTimer.prototype.resetRepetitions = function() {
+        this.options.repetitions = this.options.originalRepetitions;
+        this.updateRepetitionCounter();
 
-		if (this.options.repetitions > 0) {
-			var duration = this.options.duration;
+        if (this.options.onRestart && typeof(this.options.onRestart) === 'function') {
+            this.options.onRestart(WorkoutTimer.events.RESTART, this.domElement.eq(0), this);
+        }
+    };
 
-			// If this timer contains two duration properties, swap between the base and the alternate
-			if (this.options.duration2) {
-				if ( this.domElement.data('currentCounter') === 'alternate' ) {
-					duration = this.options.duration;
-					this.domElement.data('currentCounter', 'base');
-					this.counter.attr('data-state', 'base');
+    /**
+     *
+     */
+    WorkoutTimer.prototype.intervalComplete = function() {
+        // Play sound if configured
+        if ( this.options.sound ) {
+            ion.sound.play( this.options.sound, { volume: this.options.volume } );
+        }
 
-					// For a double-interval counter, only decrement the repetitions counter when the second interval finishes
-					this.options.repetitions--;
-				} else {
-					duration = this.options.duration2;
-					this.domElement.data('currentCounter', 'alternate');
-					this.counter.attr('data-state', 'alternate');
-				}
-			} else {
-				this.domElement.data('currentCounter', 'base');
-				this.counter.attr('data-state', 'base');
-				this.options.repetitions--;
-			}
+        if (this.options.onRoundComplete && typeof(this.options.onRoundComplete) === 'function') {
+            this.options.onRoundComplete(WorkoutTimer.events.ROUND_COMPLETE, this.domElement.eq(0), this);
+        }
 
-			this.updateRepetitionCounter();
-			this.initRunner(duration, true);
-		} else {
-			this.timerComplete();
-		}
-	};
+        if (this.options.repetitions > 0) {
+            var duration = this.options.duration;
 
-	/**
-	 * Handler for the end of the timer
-	 */
-	WorkoutTimer.prototype.timerComplete = function() {
-		this.counter.attr('data-state', 'complete');
-	};
+            // If this timer contains two duration properties, swap between the base and the alternate
+            if (this.options.duration2) {
+                if ( this.domElement.data('currentCounter') === 'alternate' ) {
+                    duration = this.options.duration;
+                    this.domElement.data('currentCounter', 'base');
+                    this.counter.attr('data-state', 'base');
 
-	/**
-	 * Updates the current state of the volume counter
-	 */
-	WorkoutTimer.prototype.updateVolumeCounter = function() {
-		var vol = WorkoutTimer.volumeStates[0];
-		this.volume = vol.level;
-		this.controls.volume.attr('data-volume-level', vol.name);
-	};
+                    // For a double-interval counter, only decrement the repetitions counter when the second interval finishes
+                    this.options.repetitions--;
+                } else {
+                    duration = this.options.duration2;
+                    this.domElement.data('currentCounter', 'alternate');
+                    this.counter.attr('data-state', 'alternate');
+                }
+            } else {
+                this.domElement.data('currentCounter', 'base');
+                this.counter.attr('data-state', 'base');
+                this.options.repetitions--;
+            }
 
-	$.WorkoutTimer = WorkoutTimer;
+            this.updateRepetitionCounter();
+            this.initRunner(duration, true);
+        } else {
+            this.timerComplete();
+        }
+    };
 
-	$.fn.workoutTimer = function (opts) {
-		return this.each(function () {
-			var options = $.extend({}, WorkoutTimer.defaults, opts);
-			new WorkoutTimer(this, options);
-		});
-	};
+    /**
+     * Handler for the end of the timer
+     */
+    WorkoutTimer.prototype.timerComplete = function() {
+        this.counter.attr('data-state', 'complete');
+
+        if (this.options.onComplete && typeof(this.options.onComplete) === 'function') {
+            this.options.onComplete(WorkoutTimer.events.COMPLETE, this.domElement.eq(0), this);
+        }
+    };
+
+    /**
+     * Updates the current state of the volume counter
+     */
+    WorkoutTimer.prototype.updateVolumeCounter = function() {
+        var vol = WorkoutTimer.volumeStates[0];
+        this.volume = vol.level;
+        this.controls.volume.attr('data-volume-level', vol.name);
+    };
+
+    $.WorkoutTimer = WorkoutTimer;
+
+    $.fn.workoutTimer = function (opts) {
+        return this.each(function () {
+            var options = $.extend({}, WorkoutTimer.defaults, opts);
+            new WorkoutTimer(this, options);
+        });
+    };
 }(jQuery));
